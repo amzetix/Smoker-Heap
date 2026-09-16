@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-brand-light text-gray-800 font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-gray-100; }
+  ::-webkit-scrollbar-thumb { @apply bg-gray-300 rounded-full; }
+}
+
+@layer components {
+  /* ── Buttons ─────────────────────────────────────────── */
+  .btn-primary {
+    @apply bg-brand-primary text-white font-semibold px-5 py-2.5 rounded-md
+           hover:bg-brand-navy transition-colors duration-200 text-sm;
+  }
+  .btn-accent {
+    @apply bg-brand-accent text-white font-semibold px-5 py-2.5 rounded-md
+           hover:bg-red-700 transition-colors duration-200 text-sm;
+  }
+  .btn-outline {
+    @apply border-2 border-brand-primary text-brand-primary font-semibold px-5 py-2.5
+           rounded-md hover:bg-brand-primary hover:text-white transition-colors duration-200 text-sm;
+  }
+
+  /* ── Cards ───────────────────────────────────────────── */
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100
+           hover:shadow-md transition-shadow duration-200;
+  }
+
+  /* ── Section headings ────────────────────────────────── */
+  .section-heading {
+    @apply text-2xl font-display font-bold text-brand-primary;
+  }
+  .section-heading span {
+    @apply text-brand-accent;
+  }
+
+  /* ── Sale badge ──────────────────────────────────────── */
+  .sale-badge {
+    @apply bg-brand-accent text-white text-xs font-bold px-2 py-0.5 rounded;
+  }
+
+  /* ── Tag pill ────────────────────────────────────────── */
+  .tag-pill {
+    @apply inline-flex items-center gap-1 bg-gray-100 text-gray-600
+           text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+}
+
+/* ── Marquee ─────────────────────────────────────────────── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+/* ── Swiper overrides ────────────────────────────────────── */
+.swiper-pagination-bullet {
+  background: white !important;
+  opacity: 0.5 !important;
+}
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+  background: #e63946 !important;
+}
+.swiper-button-next,
+.swiper-button-prev {
+  color: white !important;
+  background: rgba(0,0,0,0.4) !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+}
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 14px !important;
+}
+
+/* ── Nicotine warning bar ────────────────────────────────── */
+.nicotine-bar {
+  background: #b91c1c;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: center;
+  padding: 4px 0;
+}

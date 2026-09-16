@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Category ────────────────────────────────────────────────
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  image       String?
+  icon        String?
+  parentId    String?
+  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children    Category[] @relation("SubCategories")
+  products    Product[]
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// ─── Brand ───────────────────────────────────────────────────
+model Brand {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  logo      String?
+  products  Product[]
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ─── Product ─────────────────────────────────────────────────
+model Product {
+  id            String         @id @default(cuid())
+  name          String
+  slug          String         @unique
+  sku           String         @unique
+  description   String?
+  images        String[]
+  categoryId    String
+  category      Category       @relation(fields: [categoryId], references: [id])
+  brandId       String?
+  brand         Brand?         @relation(fields: [brandId], references: [id])
+  basePrice     Float
+  salePrice     Float?
+  tags          String[]
+  isNewArrival  Boolean        @default(false)
+  isFeatured    Boolean        @default(false)
+  isActive      Boolean        @default(true)
+  isMadeInUSA   Boolean        @default(false)
+  isClearance   Boolean        @default(false)
+  isDollarSale  Boolean        @default(false)
+  variants      ProductVariant[]
+  orderItems    OrderItem[]
+  wishlistItems WishlistItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+// ─── Product Variant (Flavor / Size / etc.) ──────────────────
+model ProductVariant {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String   // e.g. "Watermelon Ice", "Blue Razz"
+  price     Float
+  stock     Int      @default(0)
+  sku       String?
+  image     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── User ────────────────────────────────────────────────────
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  phone     String?
+  role      String   @default("customer") // "customer" | "admin" | "staff"
+  orders    Order[]
+  wishlist  WishlistItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Order ───────────────────────────────────────────────────
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  status          String      @default("pending")
+  // pending | processing | shipped | delivered | cancelled | refunded
+  items           OrderItem[]
+  subtotal        Float
+  shipping        Float       @default(0)
+  tax             Float       @default(0)
+  total           Float
+  shippingAddress Json
+  billingAddress  Json?
+  stripePaymentId String?
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+// ─── Order Item ──────────────────────────────────────────────
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  variantId String?
+  variantName String?
+  qty       Int
+  price     Float
+}
+
+// ─── Wishlist ────────────────────────────────────────────────
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+// ─── Banner / Slider ─────────────────────────────────────────
+model Banner {
+  id        String   @id @default(cuid())
+  title     String?
+  image     String
+  link      String?
+  position  String   @default("hero") // "hero" | "promo" | "category"
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
